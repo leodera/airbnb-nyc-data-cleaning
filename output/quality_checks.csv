@@ -1,0 +1,14 @@
+check,result
+Every listing id appears once,PASS
+No fully duplicated rows,PASS
+All column names are lowercase with underscores,PASS
+price is numeric and positive,PASS
+service_fee is numeric,PASS
+availability_365 is between 0 and 365,PASS
+minimum_nights is between 1 and 365,PASS
+No review dated after 2022-08-01,PASS
+last_review is a date column,PASS
+Only the 5 real boroughs remain,PASS
+Only the 4 known room types remain,PASS
+No stray spaces in name or host_name,PASS
+Listings with zero reviews have 0 reviews per month,PASS

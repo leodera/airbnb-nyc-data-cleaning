@@ -1,0 +1,8 @@
+# secrets: never commit these
+credentials.json
+service_account.json
+
+# Python and notebook junk
+__pycache__/
+.ipynb_checkpoints/
+report.html

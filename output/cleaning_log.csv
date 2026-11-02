@@ -1,0 +1,26 @@
+step,problem,column,rows_affected,detail,what_i_did,method
+2a,Messy column names (capitals and spaces),all columns,15,,"Renamed to lowercase snake_case, e.g. 'host id' -> 'host_id'","str.lower() and str.replace(' ', '_')"
+2b,Duplicate listings (identical rows),all columns,541,,"Removed the repeats and kept the first copy (102,599 -> 102,058 rows)",drop_duplicates(keep='first')
+2c,Column not useful: Almost empty: only 2 listings have a value,license,0,2 filled cells removed,Dropped the column,drop(columns=...)
+2c,Column not useful: Constant: every listing is in the United States,country,0,"101,526 filled cells removed",Dropped the column,drop(columns=...)
+2c,Column not useful: Constant: every listing is US,country_code,0,"101,927 filled cells removed",Dropped the column,drop(columns=...)
+2c,"Column not useful: Long free text, half empty, not needed for the price question",house_rules,0,"50,216 filled cells removed",Dropped the column,drop(columns=...)
+3a,"Currency stored as text ($, commas, spaces)",price,101811,values that could not be read: 0,Removed the symbols and converted to a number,str.replace() and pd.to_numeric()
+3a,"Currency stored as text ($, commas, spaces)",service_fee,101785,values that could not be read: 0,Removed the symbols and converted to a number,str.replace() and pd.to_numeric()
+3b,Dates stored as text,last_review,86226,dates that could not be read: 0,Converted to real dates,pd.to_datetime(format='%m/%d/%Y')
+3c,True/False stored as mixed text,instant_bookable,101953,,Converted to a true/false column,"map({'true': True, 'false': False})"
+4a,"Misspelled boroughs ('brookln', 'manhatan')",neighbourhood_group,2,2 misspellings; values outside the 5 boroughs: 0,Fixed the spelling and unified the casing,map(typo_map) and str.title()
+4b,Inconsistent casing or fake blanks,host_identity_verified,0,fake blanks found: 0,"Trimmed, lowercased, fake blanks made real blanks",str.strip().str.lower()
+4b,Inconsistent casing or fake blanks,cancellation_policy,0,fake blanks found: 0,"Trimmed, lowercased, fake blanks made real blanks",str.strip().str.lower()
+4b,Inconsistent casing or fake blanks,room_type,102058,fake blanks found: 0,"Trimmed, lowercased, fake blanks made real blanks",str.strip().str.lower()
+4c,Extra spaces in text,name,3493,,Trimmed the ends and collapsed repeated spaces,"str.strip() and str.replace(r'\s+', ' ')"
+4c,Extra spaces in text,host_name,85,,Trimmed the ends and collapsed repeated spaces,"str.strip() and str.replace(r'\s+', ' ')"
+5a,Availability outside 0-365 days,availability_365,3185,"431 below 0, 2754 above 365",Set the impossible values to blank (not capped at 365),df.loc[mask] = np.nan
+5b,Minimum nights below 1 or above a year,minimum_nights,48,"13 below 1, 35 above 365",Set the impossible values to blank,df.loc[mask] = np.nan
+5c,Construction year before 1900 or after 2022,construction_year,0,,Set the impossible values to blank,df.loc[mask] = np.nan
+5d,Review dates after 2022-08-01 (e.g. 2058),last_review,5,latest impossible date: 2058-06-16,Set the impossible dates to blank,df.loc[mask] = pd.NaT
+5e,Counts stored as decimals (e.g. 2020.0),"construction_year, minimum_nights, number_of_reviews, review_rate_number, calculated_host_listings_count, availability_365",102058,,Converted to whole numbers,astype('Int64')
+6a,Reviews per month blank on listings with zero reviews,reviews_per_month,15673,,Filled with 0.0,"df.loc[mask, 'reviews_per_month'] = 0.0"
+6b,Listing has reviews but no last-review date,last_review,40,,Flagged only: left blank because the true date is unknown,"flag, no change"
+6b,Listing has reviews but no reviews-per-month,reviews_per_month,22,,Flagged only: left blank because the rate cannot be rebuilt,"flag, no change"
+6b,More than 30 reviews a month (more than one a day),reviews_per_month,11,,"Flagged only: unusual but possible, so kept","flag, no change"
